@@ -31,9 +31,9 @@ mkdir ./data/out_tg/tmp_parts
 mkdir ./data/out_tg/tmp_merge
 
 
-echo "============"
-echo "Step 0: Installing dependencies in a virtual environment(It doesn't change your settings)"
-echo "============"
+echo "–––––––––––––"
+echo "Step 1: Installing dependencies in a virtual environment"
+echo "–––––––––––––"
 
 python3 -m pip install --user virtualenv
 python3 -m venv env
@@ -42,14 +42,14 @@ pip install -r requirements.txt
 
 
 if [ "$2" = true ]; then
-    echo "============"
-    echo "Step 1: Preparing the data - with noise-reduction"
-    echo "============"
+    echo "–––––––––––––"
+    echo "Step 2: Preparing the data - with noise-reduction"
+    echo "–––––––––––––"
     python ./process_data/prepare_wav_dir.py --input_dir ./data/raw --output_dir ./data/raw/all_files --use_textgrid --clean_noise
 else
-    echo "============"
-    echo "Step 1: Preparing the data - without noise-reduction"
-    echo "============"
+    echo "–––––––––––––"
+    echo "Step 2: Preparing the data - without noise-reduction"
+    echo "–––––––––––––"
     python ./process_data/prepare_wav_dir.py --input_dir ./data/raw --output_dir ./data/raw/all_files --use_textgrid 
 fi
 
@@ -59,18 +59,18 @@ if [ $? -eq 1 ]; then
     exit 1
 fi
 
-echo "============"
-echo "Step 2: Processing sound files...(may take a while - approx. 1 sec per file)"
-echo "============"
+echo "–––––––––––––"
+echo "Step 3: Processing sound files...may take a while - approx. 1 sec per file"
+echo "–––––––––––––"
 python prepare_data_textgrid.py --input_dir ./data/raw/all_files --output_dir ./data/processed --windows_tier $1
 if [ $? -eq 1 ]; then
     echo "Failed to process the data, check run_window_log.txt"
     exit 1
 fi
 
-echo "============"
-echo "Step 3: Running DDKtor"
-echo "============"
+echo "–––––––––––––"
+echo "Step 4: Running DDKtor"
+echo "–––––––––––––"
 
 python predict.py --data ./data/processed/ --out_dir ./data/out_tg/tmp_parts --cuda
 if [ $? -eq 1 ]; then
@@ -79,9 +79,9 @@ if [ $? -eq 1 ]; then
 fi
 
 
-echo "============"
-echo "Step 4: Final process"
-echo "============"
+echo "–––––––––––––"
+echo "Step 5: Final processing"
+echo "–––––––––––––"
 
 
 python merge_windows_textgrids.py --input_dir ./data/out_tg/tmp_parts --output_dir ./data/out_tg --pred_tier preds  --durations ./data/raw/all_files/voice_starts.txt --basic_hierarchy_file ./data/raw/all_files/files.txt --use_prev_textgrid
@@ -91,14 +91,9 @@ if [ $? -eq 1 ]; then
 fi
 
 
-echo "============"
-echo "============"
-echo "============"
+echo "–––––––––––––"
 echo "Finished: final predictions can be found at : ./data/out_tg/"
-echo "============"
-echo "============"
-echo "============"
-
+echo "–––––––––––––"
 
 F_cleanup
 
