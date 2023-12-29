@@ -3,3 +3,4 @@ data/
 __pycache__/
 run_log.txt
 log.txt
+.python-version
