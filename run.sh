@@ -1,7 +1,8 @@
 #!/bin/sh
 
 
-
+mkdir -p ./data/out_tg_backup/
+mv ./data/out_tg/* ./data/out_tg_backup/
 
 #cleanup
 F_cleanup() {
