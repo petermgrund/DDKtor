@@ -46,12 +46,15 @@ def convert_textgrid_to_csv(directory):
             df.rename(columns={'text': 'item2_text'}, inplace=True)
 
             # Write the DataFrame to a CSV file
-            df.to_csv(os.path.join(directory, filename.replace('.TextGrid', '.csv')), index=False)
-
+            # Create the 'csv' subfolder if it doesn't exist
             if not os.path.exists(os.path.join(directory, 'csv')):
                 os.makedirs(os.path.join(directory, 'csv'))
 
+            # Define the output file path, including the 'csv' subfolder
             output_filename = os.path.join(directory, 'csv', os.path.splitext(filename)[0] + '.csv')
+
+            # Write the DataFrame to a CSV file in the 'csv' subfolder
+            df.to_csv(output_filename, index=False)
             csv_count += 1
     return csv_count
 
