@@ -1,7 +1,10 @@
 import os
 import pandas as pd
+from colorama import Fore, init
+init(autoreset=True)
 
 def convert_textgrid_to_csv(directory):
+    csv_count = 0    
     for filename in os.listdir(directory):
         if filename.endswith(".TextGrid"):
             # Read the TextGrid file
@@ -45,6 +48,12 @@ def convert_textgrid_to_csv(directory):
             # Write the DataFrame to a CSV file
             df.to_csv(os.path.join(directory, filename.replace('.TextGrid', '.csv')), index=False)
 
+            if not os.path.exists(os.path.join(directory, 'csv')):
+                os.makedirs(os.path.join(directory, 'csv'))
+
+            output_filename = os.path.join(directory, 'csv', os.path.splitext(filename)[0] + '.csv')
+            csv_count += 1
+    return csv_count
 
 def merge_text_labels(item1_intervals, item2_intervals):
     merged_intervals = []
@@ -69,5 +78,8 @@ def merge_text_labels(item1_intervals, item2_intervals):
 
     return merged_intervals
 
-# Call the function
+# Call the functions
 convert_textgrid_to_csv('data/out_tg/')
+csv_count = convert_textgrid_to_csv('data/out_tg/')
+
+print(Fore.GREEN + f"{csv_count} files successfully converted from TextGrid to CSV.")
