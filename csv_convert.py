@@ -3,8 +3,12 @@ import pandas as pd
 from colorama import Fore, init
 init(autoreset=True)
 
+print("Current working directory:", os.getcwd())
+
 def convert_textgrid_to_csv(directory):
     csv_count = 0    
+    output_directory = '../dysarthria_analysis/ddk_data/'
+    overwrite_all = None
     for filename in os.listdir(directory):
         if filename.endswith(".TextGrid"):
             # Read the TextGrid file
@@ -51,10 +55,18 @@ def convert_textgrid_to_csv(directory):
                 os.makedirs(os.path.join(directory, 'csv'))
 
             # Define the output file path, including the 'csv' subfolder
-            output_filename = os.path.join(directory, 'csv', os.path.splitext(filename)[0] + '.csv')
+            output_filename1 = os.path.join(directory, 'csv', os.path.splitext(filename)[0] + '.csv')
+            output_filename2 = os.path.join(output_directory, os.path.splitext(filename)[0] + '.csv')
 
-            # Write the DataFrame to a CSV file in the 'csv' subfolder
-            df.to_csv(output_filename, index=False)
+            # Create subfolder and output directory if don't exist
+            if not os.path.exists(os.path.join(directory, 'csv')):
+                os.makedirs(os.path.join(directory, 'csv'))
+            if not os.path.exists(output_directory):
+                os.makedirs(output_directory)
+
+            # Write the df to CSV files
+            df.to_csv(output_filename1, index=False)
+            df.to_csv(output_filename2, index=False)
             csv_count += 1
     return csv_count
 
@@ -85,4 +97,5 @@ def merge_text_labels(item1_intervals, item2_intervals):
 convert_textgrid_to_csv('data/out_tg/')
 csv_count = convert_textgrid_to_csv('data/out_tg/')
 
-print(Fore.GREEN + f"{csv_count} files successfully converted from TextGrid to CSV.")
+print(Fore.GREEN + f"{csv_count} files successfully converted from TextGrid to CSV. ")
+print(Fore.WHITE +" Any existing CSV files with the same name were overwritten.")
