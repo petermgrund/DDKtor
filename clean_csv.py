@@ -17,6 +17,8 @@ for filename in os.listdir(directory):
         })
 
         # Add new columns with default values
+        df["time_start_manual"] = ""
+        df["time_stop_manual"] = ""
         df["study_ID"] = ""
         df["brain_side"] = ""
         df["visit"] = ""
