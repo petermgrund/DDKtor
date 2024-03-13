@@ -7,19 +7,16 @@ print("Current working directory:", os.getcwd())
 
 def convert_textgrid_to_csv(directory):
     csv_count = 0    
-    output_directory = '../dysarthria_analysis/ddk_data/'
+    output_directory = '/Users/petergrund/Documents/neurology/dysarthria_analysis/ddk_data'
     overwrite_all = None
     for filename in os.listdir(directory):
         if filename.endswith(".TextGrid"):
-            # Read the TextGrid file
             with open(os.path.join(directory, filename), 'r') as f:
                 lines = f.readlines()
 
-            # Initialize empty lists to store the intervals for item 1 and item 2
             item1_intervals = []
             item2_intervals = []
 
-            # Loop over the lines in the file to extract the intervals for item 1 and item 2
             for i in range(len(lines)):
                 if 'item [1]' in lines[i]:
                     j = i + 1
@@ -40,21 +37,17 @@ def convert_textgrid_to_csv(directory):
                             item2_intervals.append({'xmin': xmin, 'xmax': xmax, 'text': text})
                         j += 1
 
-            # Merge the text labels from item 1 onto the intervals from item 2
             merged_intervals = merge_text_labels(item1_intervals, item2_intervals)
 
-            # Convert the list of merged intervals to a DataFrame
             df = pd.DataFrame(merged_intervals)
 
-            # Rename the 'text' column to 'item2_text'
             df.rename(columns={'text': 'item2_text'}, inplace=True)
 
-            # Write the DataFrame to a CSV file
-            # Create the 'csv' subfolder if it doesn't exist
+            # Create  'csv' subfolder if doesn't exist
             if not os.path.exists(os.path.join(directory, 'csv')):
                 os.makedirs(os.path.join(directory, 'csv'))
 
-            # Define the output file path, including the 'csv' subfolder
+            # Define output file path
             output_filename1 = os.path.join(directory, 'csv', os.path.splitext(filename)[0] + '.csv')
             output_filename2 = os.path.join(output_directory, os.path.splitext(filename)[0] + '.csv')
 
@@ -64,7 +57,6 @@ def convert_textgrid_to_csv(directory):
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
 
-            # Write the df to CSV files
             df.to_csv(output_filename1, index=False)
             df.to_csv(output_filename2, index=False)
             csv_count += 1
@@ -93,7 +85,6 @@ def merge_text_labels(item1_intervals, item2_intervals):
 
     return merged_intervals
 
-# Call the functions
 convert_textgrid_to_csv('data/out_tg/')
 csv_count = convert_textgrid_to_csv('data/out_tg/')
 
