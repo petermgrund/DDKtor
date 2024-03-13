@@ -1,8 +1,17 @@
 from pydub import AudioSegment
 import os
+import shutil
 
 def get_mp3_files(directory):
     return [f for f in os.listdir(directory) if f.endswith(".mp3")]
+
+def copy_textgrid_files(input_directory, output_directory):
+    count = 0
+    for file in os.listdir(input_directory):
+        if file.endswith(".TextGrid"):
+            shutil.copy(os.path.join(input_directory, file), output_directory)
+            count += 1
+    return count
 
 def convert_all_mp3_to_wav(input_directory, output_directory):
     all_conversions_successful = True
@@ -19,7 +28,7 @@ def convert_all_mp3_to_wav(input_directory, output_directory):
                 print(f"Failed to convert {mp3_path} to {wav_path}. Error: {e}")
                 all_conversions_successful = False
     return all_conversions_successful
-default_directory = "/Users/petergrund/Library/CloudStorage/Box-Box/ETC_Private/Assessment_Speech/"
+default_directory = "../../"
 print("Please enter the root directory containing mp3 files to convert. Press Enter to use the default directory.")
 try:
     root_directory = input(f"\033[0;30mRoot directory (default: {default_directory}): \033[0m") or default_directory
@@ -27,7 +36,7 @@ except KeyboardInterrupt:
     print("\n\033[0;31mScript interrupted by user.\033[0m")
     exit(1)
     
-print("Please enter a subdirectory of \033[94m" + root_directory + "\033[0m containing mp3 files to convert. Example: ETC08/ETC08_L/ETC08_L_18mo")
+print("Please enter a subdirectory of \033[94m" + default_directory + "\033[0m containing mp3 files to convert. Example: ETC08/ETC08_L/ETC08_L_18mo")
 try:
     subdir = input("\033[0;30mSubdirectory: \033[0m")
 except KeyboardInterrupt:
@@ -35,7 +44,12 @@ except KeyboardInterrupt:
     exit(1)
 
 input_directory = os.path.join(root_directory, subdir)
-output_directory = "data/raw/"
+
+etc_dir = subdir.split('/')[0]
+if not etc_dir.startswith('ETC'):
+    print("\033[0;31mCould not extract ETCXX from subdirectory. Please check your input.\033[0m")
+    exit(1)
+output_directory = "data/raw"
 
 try:
     mp3_files = get_mp3_files(input_directory)
@@ -59,3 +73,6 @@ if all_conv_success:
     print("\033[0;32mAll conversions are complete.\033[0m")
 else:
     print("\033[0;31mAt least one conversion failed. Make sure your input and output directories exist.\033[0m")
+
+textgrid_count = copy_textgrid_files(input_directory, output_directory)
+print(f"\033[0;33m{textgrid_count} TextGrid files have also been transferred.\033[0m")
