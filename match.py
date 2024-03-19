@@ -1,12 +1,5 @@
 import os
 
-def rename_files(directory):
-    for filename in os.listdir(directory):
-        if filename.endswith(".wav") and '.' in filename.split('_')[-2]:
-            new_filename = filename.replace('.', '_')
-            os.rename(os.path.join(directory, filename), os.path.join(directory, new_filename))
-            print(f"Renamed {filename} to {new_filename}")
-
 def check_matching_files(directory):
     wav_files = set(file for file in os.listdir(directory) if file.endswith('.wav'))
     textgrid_files = set(file for file in os.listdir(directory) if file.endswith('.TextGrid'))
@@ -30,6 +23,4 @@ def check_matching_files(directory):
         for name in textgrid_without_match:
             print(name + '.TextGrid')
 
-directory = input('Enter the directory to check: ')
-rename_files(directory)
-check_matching_files(directory)
+check_matching_files('data/raw/')
