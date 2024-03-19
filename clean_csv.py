@@ -8,7 +8,7 @@ directory = "/Users/petergrund/Documents/neurology/dysarthria_analysis/ddk_data/
 csv_files = [f for f in os.listdir(directory) if f.endswith(".csv")]
 
 for filename in tqdm(csv_files):
-    # Read the file into a pandas DataFrame
+    # Read the file into a pandas df
     df = pd.read_csv(os.path.join(directory, filename))
 
     df = df.rename(columns={
@@ -36,13 +36,13 @@ for filename in tqdm(csv_files):
     brain_side = filename.split('_')[1]
     df["brain_side"] = brain_side
 
-    # Update "visit" based on the presence of certain keywords in the file name
+    # Update "visit" based on keywords in file name
     for keyword in ["Baseline", "6mo", "12mo", "18mo", "24mo"]:
         if keyword in filename:
             df["visit"] = keyword
             break
 
-    # Update "mA" based on the presence of a pattern in the file name
+    # Update "mA" based on keywords in file name
     mA_match = re.search(r'(\d+\.\d+)mA', filename)
     if mA_match:
         df["mA"] = mA_match.group(1)
@@ -51,5 +51,5 @@ for filename in tqdm(csv_files):
     if configuration_match:
         df["configuration"] = configuration_match.group(2)
 
-    # Write the DataFrame back to the CSV file
+    # Write the df back to the same CSV file
     df.to_csv(os.path.join(directory, filename), index=False)
