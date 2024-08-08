@@ -20,36 +20,29 @@ for filename in tqdm(csv_files):
 
     # Add new columns with default values
     df["study_ID"] = ""
-    df["brain_side"] = ""
     df["visit"] = ""
-    df["mA"] = ""
-    df["configuration"] = ""
+    df["eval"] = ""
 
     df["letter"] = df["letter"].str.replace(" ", "")
 
     df["letter"] = df["letter"].str.replace("c", "k")
 
-    # Update "study_ID" and "brain_side" based on the characters of the file name
+    # Populate "study_ID" based on file name
     study_ID = filename.split('_')[0]
     df["study_ID"] = study_ID
 
-    brain_side = filename.split('_')[1]
-    df["brain_side"] = brain_side
-
-    # Update "visit" based on keywords in file name
-    for keyword in ["Baseline", "6mo", "12mo", "18mo", "24mo"]:
+    # Populate "visit" based on file name
+    for keyword in ["visit1", "visit2", "visit3", "visit4", "visit5", "visit6", "visit7"]:
         if keyword in filename:
-            df["visit"] = keyword
+            df["visit"] = keyword.replace('visit', 'visit_')
             break
 
-    # Update "mA" based on keywords in file name
-    mA_match = re.search(r'(\d+\.\d+)mA', filename)
-    if mA_match:
-        df["mA"] = mA_match.group(1)
-    
-    configuration_match = re.search(r'(Baseline|6mo|12mo|18mo|24mo)_(\d{2})', filename)
-    if configuration_match:
-        df["configuration"] = configuration_match.group(2)
+    # Populate "eval" based on file name
+    for keyword in ["eval1", "eval2", "eval3", "eval4", "eval5"]:
+        if keyword in filename:
+            eval_number = re.search(r'\d+', keyword).group()
+            df["eval"] = eval_number
+            break
 
     # Write the df back to the same CSV file
     df.to_csv(os.path.join(directory, filename), index=False)
